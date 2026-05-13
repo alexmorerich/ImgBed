@@ -297,10 +297,16 @@ async function loadGallery() {
   for (const item of d.items) {
     const el = document.createElement('div');
     el.className = 'gallery-item';
+    const md = '![' + item.name + '](' + item.url + ')';
+    const ht = '<img src="' + item.url + '" alt="' + item.name + '">';
+    const bb = '[img]' + item.url + '[/img]';
     el.innerHTML = '<img src="' + item.url + '" loading="lazy">'
       + '<div class="gallery-overlay">'
-      + '<button onclick="copyText(\\''+item.url+'\\')">Copy URL</button>'
-      + '<button onclick="delImg(\\''+item.key+'\\',this)">Delete</button>'
+      + '<button onclick="copyText(\\''+item.url+'\\',this)">URL</button>'
+      + '<button onclick="copyText(\\''+md.replace(/'/g,"\\\\'")+'\\'  ,this)">MarkDown</button>'
+      + '<button onclick="copyText(\\''+ht.replace(/'/g,"\\\\'")+'\\'  ,this)">HTML</button>'
+      + '<button onclick="copyText(\\''+bb+'\\'  ,this)">BBCode</button>'
+      + '<button class="del-btn" onclick="delImg(\\''+item.key+'\\',this)">Delete</button>'
       + '</div>';
     grid.appendChild(el);
   }
@@ -366,9 +372,12 @@ button[type=submit]:hover{background:#1d4ed8}
 #gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
 .gallery-item{position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;background:#f5f5f5}
 .gallery-item img{width:100%;height:100%;object-fit:cover}
-.gallery-overlay{position:absolute;inset:0;background:rgba(0,0,0,.5);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px;opacity:0;transition:opacity .2s}
+.gallery-overlay{position:absolute;inset:0;background:rgba(0,0,0,.6);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;opacity:0;transition:opacity .2s;padding:8px}
 .gallery-item:hover .gallery-overlay{opacity:1}
-.gallery-overlay button{padding:4px 12px;border:none;border-radius:4px;background:#fff;cursor:pointer;font-size:12px}
+.gallery-overlay button{padding:4px 12px;border:none;border-radius:4px;background:#fff;cursor:pointer;font-size:11px;width:80%;color:#333}
+.gallery-overlay button:hover{background:#f0f4ff;color:#2563eb}
+.gallery-overlay .del-btn{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.5);margin-top:2px}
+.gallery-overlay .del-btn:hover{background:rgba(231,76,60,.8);border-color:transparent;color:#fff}
 dialog{border:none;border-radius:12px;padding:24px;max-width:380px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.15)}
 dialog::backdrop{background:rgba(0,0,0,.3)}
 .dialog-actions{display:flex;gap:8px;justify-content:flex-end}
