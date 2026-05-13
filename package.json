@@ -1,0 +1,9 @@
+{
+  "name": "imgbed",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "wrangler": "^4.90.0"
+  }
+}

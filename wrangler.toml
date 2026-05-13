@@ -1,0 +1,11 @@
+name = "imgbed"
+main = "src/index.js"
+compatibility_date = "2024-08-21"
+
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "img-r2"
+
+[[kv_namespaces]]
+binding = "KV"
+id = "2be464424b0b44fc90df71d03a75e4ac"
