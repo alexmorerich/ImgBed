@@ -117,7 +117,7 @@ async function handleUpload(request, env, url) {
 
   const base = url.origin;
   const imgUrl = `${base}/i/${key}`;
-  return json({ url: imgUrl, key, html: `<img src="${imgUrl}" alt="${file.name}">`, md: `![${file.name}](${imgUrl})`, bbcode: `[img]${imgUrl}[/img]` });
+  return json({ url: imgUrl, key, html: `<img src="${imgUrl}" alt="${file.name}" width=100%>`, md: `![${file.name}](${imgUrl})`, bbcode: `[img]${imgUrl}[/img]` });
 }
 
 async function serveImage(key, env) {
@@ -298,7 +298,7 @@ async function loadGallery() {
     const el = document.createElement('div');
     el.className = 'gallery-item';
     const md = '![' + item.name + '](' + item.url + ')';
-    const ht = '<img src="' + item.url + '" alt="' + item.name + '">';
+    const ht = '<img src="' + item.url + '" alt="' + item.name + '" width=100%>';
     const bb = '[img]' + item.url + '[/img]';
     el.innerHTML = '<img src="' + item.url + '" loading="lazy">'
       + '<div class="gallery-overlay">'
