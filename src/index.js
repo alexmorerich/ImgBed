@@ -297,17 +297,22 @@ async function loadGallery() {
   for (const item of d.items) {
     const el = document.createElement('div');
     el.className = 'gallery-item';
-    const md = '![' + item.name + '](' + item.url + ')';
-    const ht = '<img src="' + item.url + '" alt="' + item.name + '" width=100%>';
-    const bb = '[img]' + item.url + '[/img]';
     el.innerHTML = '<img src="' + item.url + '" loading="lazy">'
       + '<div class="gallery-overlay">'
-      + '<button onclick="copyText(\\''+item.url+'\\',this)">URL</button>'
-      + '<button onclick="copyText(\\''+md.replace(/'/g,"\\\\'")+'\\'  ,this)">MarkDown</button>'
-      + '<button onclick="copyText(\\''+ht.replace(/'/g,"\\\\'")+'\\'  ,this)">HTML</button>'
-      + '<button onclick="copyText(\\''+bb+'\\'  ,this)">BBCode</button>'
-      + '<button class="del-btn" onclick="delImg(\\''+item.key+'\\',this)">Delete</button>'
+      + '<button class="gc-btn">URL</button>'
+      + '<button class="gc-btn">MarkDown</button>'
+      + '<button class="gc-btn">HTML</button>'
+      + '<button class="gc-btn">BBCode</button>'
+      + '<button class="del-btn">Delete</button>'
       + '</div>';
+    const vals = [
+      item.url,
+      '![' + item.name + '](' + item.url + ')',
+      '<img src="' + item.url + '" alt="' + item.name + '" width=100%>',
+      '[img]' + item.url + '[/img]'
+    ];
+    el.querySelectorAll('.gc-btn').forEach((b, i) => b.onclick = function() { copyText(vals[i], this); });
+    el.querySelector('.del-btn').onclick = function() { delImg(item.key, this); };
     grid.appendChild(el);
   }
   galleryCursor = d.cursor;
