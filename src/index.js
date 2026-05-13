@@ -117,7 +117,7 @@ async function handleUpload(request, env, url) {
 
   const base = url.origin;
   const imgUrl = `${base}/i/${key}`;
-  return json({ url: imgUrl, key, html: `<img src="${imgUrl}" alt="${file.name}">`, md: `![${file.name}](${imgUrl})` });
+  return json({ url: imgUrl, key, html: `<img src="${imgUrl}" alt="${file.name}">`, md: `![${file.name}](${imgUrl})`, bbcode: `[img]${imgUrl}[/img]` });
 }
 
 async function serveImage(key, env) {
@@ -262,11 +262,13 @@ async function upload(files) {
       const r = await fetch('/upload', { method: 'POST', body: fd });
       const d = await r.json();
       if (d.error) { row.querySelector('.status').textContent = d.error; continue; }
+      row.className = 'result-card';
       row.innerHTML = '<img src="' + d.url + '" class="thumb">'
-        + '<div class="links">'
-        + '<input readonly value="' + d.url + '" onclick="this.select()">'
-        + '<button onclick="copyText(\\''+d.md+'\\')">MD</button>'
-        + '<button onclick="copyText(\\''+d.html.replace(/'/g,"\\\\'")+'\\')" >HTML</button>'
+        + '<div class="embed-rows">'
+        + embedRow('URL', d.url)
+        + embedRow('MarkDown', d.md)
+        + embedRow('HTML', d.html)
+        + embedRow('BBCode', d.bbcode)
         + '</div>';
       galleryCursor = null;
       loadGallery();
@@ -274,8 +276,17 @@ async function upload(files) {
   }
 }
 
-function copyText(t) { navigator.clipboard.writeText(t); }
-function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+function copyText(t, btn) {
+  navigator.clipboard.writeText(t);
+  if (btn) { const orig = btn.textContent; btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = orig, 1200); }
+}
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
+function embedRow(label, value) {
+  const escaped = value.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+  return '<div class="embed-row"><span class="embed-label">' + label + '</span>'
+    + '<input readonly value="' + escaped + '" onclick="this.select()">'
+    + '<button class="copy-btn" onclick="copyText(this.previousElementSibling.value, this)">Copy</button></div>';
+}
 
 let galleryCursor = null;
 async function loadGallery() {
@@ -339,11 +350,15 @@ button[type=submit]{width:100%;padding:10px;border:none;border-radius:8px;backgr
 button[type=submit]:hover{background:#1d4ed8}
 .dropzone{border:2px dashed #c0c0c0;border-radius:10px;padding:48px 24px;text-align:center;cursor:pointer;transition:border-color .2s;color:#888}
 .dropzone.over,.dropzone:hover{border-color:#2563eb;color:#2563eb}
+.result-card{padding:14px 0;border-bottom:1px solid #f0f0f0;display:flex;gap:14px;align-items:flex-start}
+.thumb{width:64px;height:64px;object-fit:cover;border-radius:8px;flex-shrink:0}
+.embed-rows{flex:1;display:flex;flex-direction:column;gap:6px}
+.embed-row{display:flex;align-items:center;gap:8px}
+.embed-label{width:70px;flex-shrink:0;font-size:12px;font-weight:600;color:#888;text-align:right}
+.embed-row input[readonly]{flex:1;font-size:12px;padding:6px 10px;margin:0;border:1px solid #e0e0e0;border-radius:6px;background:#f8f9fa;color:#555}
+.copy-btn{padding:5px 12px;border:1px solid #d0d0d0;border-radius:6px;background:#fff;cursor:pointer;font-size:12px;color:#555;white-space:nowrap}
+.copy-btn:hover{background:#f0f4ff;border-color:#2563eb;color:#2563eb}
 .result-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f0f0f0}
-.thumb{width:48px;height:48px;object-fit:cover;border-radius:6px}
-.links{flex:1;display:flex;gap:6px;align-items:center}
-.links input{flex:1;font-size:12px;margin:0}
-.links button{padding:4px 10px;border:1px solid #d0d0d0;border-radius:4px;background:#fff;cursor:pointer;font-size:12px}
 .fname{font-size:13px;color:#555}
 .status{font-size:13px;color:#888}
 #gallery h3{margin-bottom:12px;font-size:16px;color:#555}
